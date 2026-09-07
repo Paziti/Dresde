@@ -4,9 +4,8 @@ import type { Location } from "./types";
  * Dresde (peluquería & barbería, @dresde.co) operates in Bahía Blanca,
  * Buenos Aires. The five addresses and WhatsApp links below are REAL,
  * pulled directly from the "Enlaces" list in their own Instagram bio.
- * Their caption on a recent Reel says six branches total — only five
- * expose a WhatsApp link in the bio, so a sixth location is still
- * missing here.
+ * A caption on their anniversary post confirms five sucursales total,
+ * so this list is complete.
  *
  * The first photo per location (the storefront) is REAL, provided
  * directly for this build. Everything else — hours, prices, staff

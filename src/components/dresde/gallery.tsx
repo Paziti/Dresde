@@ -38,7 +38,12 @@ export function Gallery() {
           <span className="font-sans text-label uppercase tracking-[0.14em] text-dresde-mute">
             Instagram
           </span>
-          <h2 className="font-display text-display-l tracking-[-0.015em] font-extrabold uppercase text-dresde-paper">
+          {/* A handle reads as a subtitle, not a headline — the same
+              text-display-l used for "Elegí tu Dresde" made "@dresde.co"
+              (with its @ and . pulling extra visual weight) overwhelm the
+              section. A smaller, still-fluid scale of its own instead of
+              reusing a named token that doesn't quite fit. */}
+          <h2 className="font-display text-[clamp(1.75rem,1.3rem+3.2vw,3rem)] leading-[0.95] tracking-[-0.01em] font-extrabold uppercase text-dresde-paper">
             @dresde.co
           </h2>
         </div>
