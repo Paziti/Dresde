@@ -1,0 +1,219 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   DRESDE — Design tokens
+   Concept: "Black Space". Black + type + image + motion. No fifth color.
+   ========================================================================== */
+
+@theme inline {
+  /* -- Brand palette (feeds shadcn's semantic tokens so any primitive,
+     current or future, inherits the Dresde system automatically) -- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* -- Dresde-specific brand colors, used directly in bespoke components -- */
+  --color-dresde-black: #000000;
+  --color-dresde-surface: #0a0a0a;
+  --color-dresde-surface-2: #131313;
+  --color-dresde-line: rgba(255, 255, 255, 0.1);
+  --color-dresde-line-strong: rgba(255, 255, 255, 0.18);
+  --color-dresde-paper: #f4f1ea;
+  --color-dresde-paper-dim: #b4b0a6;
+  --color-dresde-mute: #7a776f;
+  /* Brass: the one accent, pulled from the real storefront neon/foil signage
+     and the gold rule in Dresde's own wordmark — not invented. Used only for
+     the current-day marker, active indicators, and hairline rules. */
+  --color-dresde-brass: #b99a63;
+  --color-dresde-brass-dim: #6e5c3c;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
+  --radius-4xl: 2px;
+
+  /* -- Type families -- */
+  --font-display: var(--font-syne), "Syne", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* -- Type scale: display XL / display L / heading / body / small / label / caption --
+     Fluid via clamp() so hierarchy holds from 360px to 1920px+ without breakpoints. */
+  --text-display-xl: clamp(3.25rem, 4.5rem + 9vw, 12rem);
+  --text-display-xl--line-height: 0.88;
+  --text-display-xl--letter-spacing: -0.02em;
+
+  --text-display-l: clamp(2.25rem, 1.6rem + 4vw, 5.5rem);
+  --text-display-l--line-height: 0.94;
+  --text-display-l--letter-spacing: -0.015em;
+
+  --text-heading: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  --text-heading--line-height: 1.15;
+  --text-heading--letter-spacing: -0.01em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.55;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.14em;
+
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.08em;
+
+  /* -- Motion tokens: fast / medium / slow / cinematic --
+     Curves come from the animate skill's tables, not hand-rolled. */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --duration-fast: 150ms;
+  --duration-medium: 350ms;
+  --duration-slow: 700ms;
+  --duration-cinematic: 1200ms;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Dresde is a fixed brand surface, not a theme users toggle — :root
+     carries the one intended look. */
+  --background: #000000;
+  --foreground: #f4f1ea;
+  --card: #0a0a0a;
+  --card-foreground: #f4f1ea;
+  --popover: #0a0a0a;
+  --popover-foreground: #f4f1ea;
+  --primary: #f4f1ea;
+  --primary-foreground: #000000;
+  --secondary: #131313;
+  --secondary-foreground: #f4f1ea;
+  --muted: #131313;
+  --muted-foreground: #a3a099;
+  --accent: #131313;
+  --accent-foreground: #f4f1ea;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #b99a63;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #f4f1ea;
+  --sidebar-primary: #f4f1ea;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #131313;
+  --sidebar-accent-foreground: #f4f1ea;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #b99a63;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "tnum" 1;
+  }
+
+  ::selection {
+    background: var(--color-dresde-brass);
+    color: #000000;
+  }
+
+  /* Visible focus everywhere, replaced not removed. */
+  :focus-visible {
+    outline: 2px solid var(--color-dresde-brass);
+    outline-offset: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a, button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Skip link: visually hidden until focused. */
+  .skip-link {
+    @apply fixed left-4 top-4 z-[100] -translate-y-24 bg-dresde-paper px-4 py-3 text-black transition-transform duration-(--duration-fast) ease-out-strong;
+  }
+  .skip-link:focus-visible {
+    @apply translate-y-0;
+  }
+}
+
+/* Hover-gated image zoom — real hover only, never a touch tap. */
+@media (hover: hover) and (pointer: fine) {
+  .hover-zoom:hover .hover-zoom-img {
+    transform: scale(1.045);
+  }
+}
