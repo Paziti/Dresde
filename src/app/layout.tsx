@@ -40,6 +40,12 @@ export const metadata: Metadata = {
     description: "Más que un corte, una experiencia.",
   },
   robots: { index: true, follow: true },
+  // Mobile browsers (iOS Safari especially) auto-detect address-like text
+  // ("Don Bosco 742", "Salliqueló 739") and silently turn it into a tappable
+  // link of their own — inconsistent per string, entirely outside our CSS
+  // or markup. Every real link on this page is an explicit <a>; nothing
+  // here should be auto-linked.
+  formatDetection: { telephone: false, date: false, address: false, email: false },
 };
 
 export const viewport: Viewport = {

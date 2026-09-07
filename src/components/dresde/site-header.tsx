@@ -66,7 +66,7 @@ export function SiteHeader() {
           rel="noopener noreferrer"
           className="inline-flex min-h-11 items-center border border-dresde-line-strong px-4 font-sans text-label uppercase tracking-[0.14em] text-dresde-paper transition-colors duration-(--duration-fast) ease hover:border-dresde-brass hover:text-dresde-brass focus-visible:border-dresde-brass"
         >
-          Reservar · {selected.address}
+          Reservar · {selected.name}
         </a>
       ) : (
         <a
