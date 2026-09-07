@@ -48,14 +48,29 @@ export function LocationsExperience() {
   }, [selected]);
 
   function handleSelect(id: string) {
+    // The very first selection also flips the grid above this section from
+    // its full height to its shrunk one (see LocationsGrid) — an animated
+    // `transition-[height]`, not instant. Scrolling on the next frame, as
+    // before, measured the target's position while that shrink was still
+    // mid-flight: by the time it finished, everything below had moved up,
+    // leaving the scroll resting well past where it should (reported on
+    // mobile as landing on the second of three gallery photos instead of
+    // the location header). Switching between two already-selected locals
+    // doesn't touch that height, so it doesn't need the wait.
+    const gridIsShrinking = selectedId === null;
     setSelectedId(id);
-    // Wait a frame so the detail section exists before scrolling to it.
-    requestAnimationFrame(() => {
+
+    const scrollToDetail = () =>
       detailRef.current?.scrollIntoView({
         behavior: reduce ? "auto" : "smooth",
         block: "start",
       });
-    });
+
+    if (gridIsShrinking && !reduce) {
+      setTimeout(scrollToDetail, duration.medium * 1000 + 30);
+    } else {
+      requestAnimationFrame(scrollToDetail);
+    }
   }
 
   return (
