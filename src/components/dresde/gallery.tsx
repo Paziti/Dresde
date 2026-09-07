@@ -25,10 +25,9 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 /**
- * A teaser of Dresde's real Instagram feed — photos and reels, mixed —
- * with a direct link out to the real profile. All six slots are
- * placeholders (see gallery.ts); real content drops in without touching
- * this component.
+ * A teaser of Dresde's real Instagram feed — photos and reels, mixed.
+ * Each tile links to its own post when one is set (see gallery.ts);
+ * placeholder tiles without a post yet fall back to the profile root.
  */
 export function Gallery() {
   return (
@@ -62,7 +61,7 @@ export function Gallery() {
         {galleryItems.map((item) => (
           <li key={item.id} className="relative aspect-square">
             <a
-              href={INSTAGRAM_URL}
+              href={item.href ?? INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={item.alt}
