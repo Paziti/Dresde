@@ -60,11 +60,21 @@ export function LocationsExperience() {
     const gridIsShrinking = selectedId === null;
     setSelectedId(id);
 
-    const scrollToDetail = () =>
-      detailRef.current?.scrollIntoView({
-        behavior: reduce ? "auto" : "smooth",
-        block: "start",
-      });
+    const scrollToDetail = () => {
+      const el = detailRef.current;
+      if (!el) return;
+      // A fixed `scroll-mt` fought the sticky site header: that header's
+      // real height isn't constant (it wraps differently at some widths),
+      // so a hardcoded offset landed right for one viewport and wrong for
+      // another. Reading the header's actual height at scroll time and
+      // computing the target ourselves is correct regardless of viewport —
+      // this lands the nav exactly where the fixed header ends, with no
+      // dead gap and no guesswork.
+      const fixedHeader = document.querySelector("header");
+      const headerHeight = fixedHeader?.getBoundingClientRect().height ?? 0;
+      const targetY = el.getBoundingClientRect().top + window.scrollY - headerHeight;
+      window.scrollTo({ top: targetY, behavior: reduce ? "auto" : "smooth" });
+    };
 
     if (gridIsShrinking && !reduce) {
       setTimeout(scrollToDetail, duration.medium * 1000 + 30);
@@ -105,7 +115,7 @@ export function LocationsExperience() {
        * exit phase to get stuck in), and Motion still runs the panel's
        * own initial→animate reveal on every mount.
        */}
-      <div ref={detailRef} className="scroll-mt-[128px]">
+      <div ref={detailRef}>
         {selected ? (
           <motion.div
             key={selected.id}
