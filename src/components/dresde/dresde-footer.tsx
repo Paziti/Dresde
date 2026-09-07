@@ -11,12 +11,20 @@ export function DresdeFooter() {
           </p>
         </div>
 
-        <a
-          href="#locales"
-          className="inline-flex min-h-11 items-center border border-dresde-line-strong px-4 font-sans text-label uppercase tracking-[0.14em] text-dresde-paper-dim transition-colors duration-(--duration-fast) ease hover:border-dresde-brass hover:text-dresde-brass"
-        >
-          Ver sucursales
-        </a>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="#locales"
+            className="inline-flex min-h-11 items-center border border-dresde-line-strong px-4 font-sans text-label uppercase tracking-[0.14em] text-dresde-paper-dim transition-colors duration-(--duration-fast) ease hover:border-dresde-brass hover:text-dresde-brass"
+          >
+            Ver sucursales
+          </a>
+          <a
+            href="#galeria"
+            className="inline-flex min-h-11 items-center border border-dresde-line-strong px-4 font-sans text-label uppercase tracking-[0.14em] text-dresde-paper-dim transition-colors duration-(--duration-fast) ease hover:border-dresde-brass hover:text-dresde-brass"
+          >
+            Ver galería
+          </a>
+        </div>
       </div>
 
       <p className="mt-12 font-sans text-caption uppercase tracking-[0.1em] text-dresde-mute">
