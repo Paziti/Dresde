@@ -39,11 +39,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# Claude Code skills tooling (not part of the site)
-/.agents/
-/.claude/
-/skills-lock.json
-
-# raw source photos — processed versions already live in /public
-/img/
