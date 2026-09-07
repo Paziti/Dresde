@@ -7,13 +7,14 @@
  * `src/components/dresde/locations-grid.tsx`, which replaces the demo data
  * with real location content and swaps the literal width/height animation
  * for a `flex-grow` + Motion `layout` (transform-based) approach.
- *
- * The original also imported Swiper's CSS, which this project never
- * installs (nothing here uses Swiper) — dropped so the file compiles.
  */
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
+import "swiper/css";
+import "swiper/css/effect-creative";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
 
 import { cn } from "@/lib/utils";
 
