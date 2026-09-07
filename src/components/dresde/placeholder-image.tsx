@@ -66,7 +66,7 @@ export function PlaceholderImage({
         }}
       />
       {label ? (
-        <span className="relative font-display text-label uppercase tracking-[0.2em] text-dresde-mute">
+        <span className="relative font-display text-caption uppercase tracking-[0.14em] text-dresde-mute/60">
           {label}
         </span>
       ) : null}
