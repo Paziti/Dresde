@@ -54,7 +54,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" className={`${syne.variable} ${manrope.variable}`}>
+    <html
+      lang="es"
+      className={`${syne.variable} ${manrope.variable} overflow-x-hidden`}
+    >
       <body className="bg-dresde-black text-dresde-paper antialiased overflow-x-hidden">
         <a href="#contenido" className="skip-link">
           Saltar al contenido

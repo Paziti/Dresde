@@ -5,10 +5,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ease, duration } from "@/lib/motion";
 
 // Served from /public/brand — the real Dresde wordmark, cropped tight
-// from a high-res file provided directly. Native size (724×347) is
-// passed explicitly since files under /public aren't statically imported
-// the way src/ assets are.
-const LOGO_WIDTH = 724;
+// from a high-res file provided directly. The crop had noticeably more
+// black padding on the left than the right (plus a stray thin line
+// artifact in it), which put the actual glyphs off-center within the
+// frame — trimmed to match, so the wordmark now sits centered. Native
+// size (675×347) is passed explicitly since files under /public aren't
+// statically imported the way src/ assets are.
+const LOGO_WIDTH = 675;
 const LOGO_HEIGHT = 347;
 
 /**
