@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { locations } from "@/lib/locations";
 import { whatsappBookingUrl } from "@/lib/whatsapp";
 import { useSelection } from "@/lib/selection-context";
 import { ease, duration } from "@/lib/motion";
+
+// Same file as the hero, at a small fixed size. Native aspect ratio
+// (675×347) — height is set via className, width follows automatically.
+const LOGO_WIDTH = 675;
+const LOGO_HEIGHT = 347;
 
 /**
  * Purpose: spatial consistency — a persistent, minimal way back to the top
@@ -42,9 +48,16 @@ export function SiteHeader() {
     >
       <a
         href="#top"
-        className="font-display text-heading font-extrabold uppercase tracking-tight text-dresde-paper transition-colors duration-(--duration-fast) ease"
+        aria-label="Dresde — volver arriba"
+        className="shrink-0 transition-opacity duration-(--duration-fast) ease hover:opacity-80"
       >
-        Dresde
+        <Image
+          src="/brand/dresde-logo.png"
+          alt="Dresde"
+          width={LOGO_WIDTH}
+          height={LOGO_HEIGHT}
+          className="h-7 w-auto select-none sm:h-8"
+        />
       </a>
       {selected ? (
         <a

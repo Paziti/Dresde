@@ -24,8 +24,15 @@ export function LocationDetail({ location }: { location: Location }) {
         <span className="font-sans text-label uppercase tracking-[0.14em] text-dresde-brass">
           {location.address}
         </span>
-        {/* h3: nested under the "Elegí tu Dresde" h2 above it in the page. */}
-        <h3 className="font-display text-display-l tracking-[-0.015em] font-extrabold uppercase text-dresde-paper">
+        {/* h3: nested under the "Elegí tu Dresde" h2 above it in the page.
+            break-words matters here specifically: names like "Washington"
+            and "Salliqueló" are single words with nowhere to wrap, and at
+            this font size they were wider than a phone screen — with
+            nothing to break on, the text overflowed the page itself and
+            mobile browsers respond by zooming out, which read as "the
+            page shrinks and I can scroll sideways". Shorter names, and
+            "Don Bosco" (a real space to wrap at), never hit this. */}
+        <h3 className="break-words font-display text-display-l tracking-[-0.015em] font-extrabold uppercase text-dresde-paper">
           {location.name}
         </h3>
         <p className="font-sans text-small text-dresde-paper-dim">{location.city}</p>
