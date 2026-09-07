@@ -57,7 +57,12 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
               key={location.id}
               type="button"
               layout
-              transition={{ duration: duration.medium, ease: ease.inOut }}
+              // Slower and softer than the rest of the site's UI motion
+              // (duration.slow + ease.out, not the snappier medium/inOut
+              // pair) — this flex-grow resize fires on every hover sweep
+              // across the row, so a quick, hard-eased snap read as
+              // jarring where a settling, decelerating move reads calm.
+              transition={{ duration: duration.slow, ease: ease.out }}
               onMouseEnter={() => setHoveredId(location.id)}
               onFocus={() => setHoveredId(location.id)}
               onBlur={() => setHoveredId(null)}
@@ -70,7 +75,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
               // previewed tile clear priority (~37% of the row vs ~16%
               // each) without making the rest illegible.
               style={{ flexGrow: isPreview ? 2.4 : 1 }}
-              className="hover-zoom group relative h-full min-w-0 overflow-hidden rounded-3xl text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-dresde-brass"
+              className="hover-zoom group relative h-full min-w-0 overflow-hidden rounded-[2.5rem] text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-dresde-brass"
             >
               <span className="hover-zoom-img absolute inset-0 block transition-transform duration-(--duration-slow) ease-out-strong">
                 <PlaceholderImage
@@ -88,7 +93,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
 
               <span
                 aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent transition-opacity duration-(--duration-medium) ease-out-strong"
+                className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent transition-opacity duration-(--duration-slow) ease-out-strong"
                 style={{ opacity: isPreview ? 1 : 0.55 }}
               />
 
@@ -122,7 +127,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
             aria-pressed={selectedId === location.id}
             aria-label={`Ver ${location.name} — ${location.address}`}
             className={cn(
-              "relative block w-full overflow-hidden rounded-3xl text-left transition-[height] duration-(--duration-medium) ease-out-strong",
+              "relative block w-full overflow-hidden rounded-[2.5rem] text-left transition-[height] duration-(--duration-medium) ease-out-strong",
               hasSelection ? "h-[42vh] min-h-[300px]" : "h-[58vh] min-h-[380px]"
             )}
           >
