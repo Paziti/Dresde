@@ -70,7 +70,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
               // previewed tile clear priority (~37% of the row vs ~16%
               // each) without making the rest illegible.
               style={{ flexGrow: isPreview ? 2.4 : 1 }}
-              className="hover-zoom group relative h-full min-w-0 overflow-hidden text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-dresde-brass"
+              className="hover-zoom group relative h-full min-w-0 overflow-hidden rounded-3xl text-left outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-dresde-brass"
             >
               <span className="hover-zoom-img absolute inset-0 block transition-transform duration-(--duration-slow) ease-out-strong">
                 <PlaceholderImage
@@ -122,7 +122,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
             aria-pressed={selectedId === location.id}
             aria-label={`Ver ${location.name} — ${location.address}`}
             className={cn(
-              "relative block w-full overflow-hidden text-left transition-[height] duration-(--duration-medium) ease-out-strong",
+              "relative block w-full overflow-hidden rounded-3xl text-left transition-[height] duration-(--duration-medium) ease-out-strong",
               hasSelection ? "h-[42vh] min-h-[300px]" : "h-[58vh] min-h-[380px]"
             )}
           >
