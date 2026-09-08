@@ -35,13 +35,27 @@ const VIDEO_SRC = "/video/clipper-curtain.mp4";
  * never a fixed-duration animation — scrolling back up reverses it
  * exactly, frame for frame.
  *
- * The pinned range is short on purpose: 180vh total, so there's ~80vh
- * of actual scroll distance to sweep progress 0→1 (the sticky panel
- * itself is a full 100svh of that). That 80vh matters for more than
- * pacing — anything much thinner gets skipped by a single Page Down /
- * spacebar jump (browsers move ~90% of the viewport in one step with
- * no intermediate frames), which would make the video never render at
- * all for a keyboard scroller.
+ * The container is 180vh total, but that's NOT what `progress` 0→1
+ * tracks. A sticky panel's own height (100svh here) is inherently
+ * "dead" scroll-wise in the usual `["start start", "end end"]` setup:
+ * that offset only tracks the PINNED phase (container height − panel
+ * height = 80vh), and freezes at progress=1 the instant the panel
+ * unsticks — leaving the panel's full 100vh release/slide-away glide
+ * completely untracked, frozen at whatever state progress=1 left it
+ * in. That's exactly what read as "an extra ~2 scrolls of plain
+ * black" before this: the old fade finished right as the panel
+ * unstuck, so the entire slide-away played out already-faded-to-0.
+ *
+ * `["start start", "end start"]` instead tracks the WHOLE container
+ * (180vh) — pinned phase + release glide, progress 0→1 end to end.
+ * Every breakpoint below is the old pinned-phase value rescaled by
+ * 80/180 (4/9) so it fires at the exact same scroll position as
+ * before (dead zone width, hero timing, reveal, dolly — all
+ * unchanged in absolute scroll pixels). Only the fade moves: it now
+ * sits in the final ~15% of the FULL range, well into the release
+ * glide, so the video keeps accompanying the scroll instead of
+ * leaving a dead black gap, and reaches opacity 0 right as the panel
+ * finishes sliding away — no leftover black afterward.
  */
 export function HeroSceneTransition() {
   const reduce = useReducedMotion();
@@ -52,38 +66,42 @@ export function HeroSceneTransition() {
 
   const { scrollYProgress } = useScroll({
     target: sceneRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end start"],
   });
 
-  // A short dead zone (0→0.12) where scrolling does nothing visible yet:
-  // with only ~80vh of real scroll distance driving the whole scene, the
+  // A short dead zone where scrolling does nothing visible yet: with
+  // only ~80vh of real scroll distance driving the pinned phase, the
   // hero used to start fading on the very first pixel scrolled, which
   // read as premature — the transformation kicking in before the user
   // had really committed to scrolling. This buffer gives it a beat to
   // breathe before anything starts moving. After that, hero fades out
-  // and drifts up — same shape as before, just shifted later.
-  const heroOpacity = useTransform(scrollYProgress, [0.12, 0.38], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0.12, 0.38], [0, -48]);
+  // and drifts up — same shape and same scroll position as before
+  // (0.12→0.38 of the old 80vh-only range), just rescaled by 4/9 to
+  // land on the same pixels now that progress spans the full 180vh.
+  const heroOpacity = useTransform(scrollYProgress, [0.0533, 0.1689], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0.0533, 0.1689], [0, -48]);
 
-  // Video reveal starts only once the hero has fully retired (0.38), so
+  // Video reveal starts only once the hero has fully retired, so
   // there's no window where both are simultaneously visible over the
   // same area. `clipTop` is the percentage still masked off the TOP of
   // the frame: 100 (nothing showing) → 0 (fully revealed) — visually
   // that reads as the video rising up from the bottom edge. The scale
-  // dolly-in keeps the same 0.88→1→1.08 sweep as before, just
-  // reanchored to the same 0.38 start so it stays in sync with the
-  // reveal instead of racing ahead of it.
-  const videoClipTop = useTransform(scrollYProgress, [0.38, 0.72], [100, 0]);
-  const videoScale = useTransform(scrollYProgress, [0.38, 0.66, 1], [0.88, 1, 1.08]);
-  // Fade into "Elegí tu Dresde" at the very end. Widened from an
-  // earlier [0.9, 1] — that 10%-of-progress window was only ~50–70px
-  // of actual scroll (out of the ~80vh runway), short enough that a
-  // single wheel/trackpad gesture crossed it in one or two frames and
-  // read as an abrupt cut rather than a fade. 25% gives it enough
-  // scroll distance to actually feel gradual, while the video is still
-  // fully revealed and covering the viewport (clipTop reveal finishes
-  // at 0.72) for the whole hold before this starts.
-  const videoOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0]);
+  // dolly-in keeps the same 0.88→1→1.08 sweep as before, reanchored to
+  // the same start so it stays in sync with the reveal instead of
+  // racing ahead of it. Same rescale as heroOpacity: these are the old
+  // 0.38→0.72 / 0.38→0.66→1 breakpoints × 4/9, same scroll pixels.
+  const videoClipTop = useTransform(scrollYProgress, [0.1689, 0.32], [100, 0]);
+  const videoScale = useTransform(scrollYProgress, [0.1689, 0.2933, 0.4444], [0.88, 1, 1.08]);
+  // Fade into "Elegí tu Dresde". Deliberately NOT a rescale of the old
+  // [0.75, 1] — that would just recreate the exact bug being fixed
+  // here (fade completing the instant the panel unsticks, at the new
+  // ~0.4444, leaving the entire release glide already-black). Instead
+  // this sits in the last ~15% of the FULL range (pinned phase + the
+  // panel's own release glide), so the video keeps accompanying the
+  // scroll — sliding with it, not gone — through most of that glide,
+  // and only fades in its final stretch, reaching opacity 0 right as
+  // the panel finishes leaving the viewport.
+  const videoOpacity = useTransform(scrollYProgress, [0.85, 1], [1, 0]);
 
   // `opacity` (and, for the same reason, `clip-path`) are deliberately
   // NOT passed through the motion component's `style` prop here —

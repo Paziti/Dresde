@@ -33,12 +33,17 @@ Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos l
 
 ## Transición hero → contenido
 
-`hero-scene-transition.tsx` funde el Hero y un video en una sola escena continua controlada por scroll: no hay un bloque de video aparte entre dos secciones. Un contenedor de 180vh fija (`sticky`) el hero y el video superpuestos; a medida que se scrollea (~80vh de recorrido real):
+`hero-scene-transition.tsx` funde el Hero y un video en una sola escena continua controlada por scroll: no hay un bloque de video aparte entre dos secciones. El contenedor mide 180vh, pero `scrollYProgress` (Motion `useScroll`) no sigue solo eso: usa `offset: ["start start", "end start"]` para trackear el recorrido COMPLETO del sticky, no solo su fase "pineada".
 
-1. Los primeros 0→0.12 de progreso son una zona muerta: nada se mueve todavía. Sin esto, el hero empezaba a desvanecerse con el primer píxel de scroll (el recorrido real es corto, ~80vh), lo que se sentía prematuro.
-2. El hero se desvanece y sube (`opacity`/`translateY`) — progreso 0.12→0.38.
-3. Recién cuando el hero terminó de retirarse (progreso ≥0.38) el video empieza a revelarse desde el borde inferior hacia arriba vía `clip-path: inset()` (no vía opacity) mientras hace un leve dolly-in (`scale` 0.88→1.08).
-4. Un fade al final (0.75→1, el 25% del progreso) evita un corte brusco al pasar a "Elegí tu Dresde" — una ventana más angosta (probado con 0.9→1) equivale a tan pocos píxeles de scroll real que un solo gesto de rueda/trackpad la atraviesa entera en uno o dos frames y se percibe como corte, no como fade.
+Esto importa porque un panel `sticky` de 100svh dentro de un contenedor de 180vh tiene dos fases: se queda fijo (`top:0`) mientras se scrollean los primeros 80vh, y después necesita otros 100vh completos (su propia altura) para deslizarse fuera de pantalla una vez que se despega — es inherente al mecanismo de `position: sticky`, no algo agregado. Con el offset típico (`"end end"`), `progress` solo cubre esos primeros 80vh y se congela en 1 apenas el panel se despega, dejando el resto (~100vh, "~2 scrolls") sin ninguna animación: lo que sea que haya quedado en pantalla en ese instante se ve congelado durante todo ese tramo. Con `"end start"`, `progress` 0→1 cubre los 180vh enteros (fase fija + deslizamiento), así que se puede seguir animando durante el deslizamiento también.
+
+1. Progreso 0→0.0533: zona muerta, nada se mueve todavía. Sin esto, el hero empezaba a desvanecerse con el primer píxel de scroll, lo que se sentía prematuro.
+2. El hero se desvanece y sube (`opacity`/`translateY`) — progreso 0.0533→0.1689.
+3. Recién cuando el hero terminó de retirarse el video empieza a revelarse desde el borde inferior hacia arriba vía `clip-path: inset()` (no vía opacity, progreso 0.1689→0.32) mientras hace un leve dolly-in (`scale` 0.88→1.08, hasta 0.4444 — exactamente cuando el panel se despega).
+4. El video se mantiene completamente visible (`opacity: 1`) durante todo el resto del recorrido, incluida la fase de deslizamiento, hasta progreso 0.85.
+5. Recién en el último 15% (0.85→1) el video se desvanece — llega a `opacity: 0` justo cuando el panel termina de salir de pantalla, así que no queda ningún tramo negro extra antes de "Elegí tu Dresde".
+
+Los breakpoints de 1–3 son los mismos de antes (cuando `progress` solo cubría los 80vh) reescalados ×4/9 (80/180) — disparan en el mismo scroll absoluto en píxeles, cero cambio de comportamiento ahí. Solo el fade (4–5) se reubicó: antes terminaba exactamente al despegarse el panel (dejando ~2 scrolls de negro sin usar), ahora ocupa el tramo final real.
 
 El hero vive en su propia capa (`z-10`) por encima del video (`z-0`) — no es un cross-dissolve: mientras el hero tiene cualquier opacidad, el video literalmente no tiene área visible (`clip-path` en `inset(100%)`), así que nunca se ve el video "atravesando" o mezclado con el logo. Todo depende de `scrollYProgress` (Motion `useScroll` + `useTransform`), nunca de una duración fija, así que scrollear para arriba revierte la escena exactamente frame a frame. Con `prefers-reduced-motion` se muestran hero y video en bloques estáticos, sin sticky ni transform.
 
