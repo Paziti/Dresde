@@ -5,7 +5,10 @@ export function LocationGallery({ location }: { location: Location }) {
   const [main, ...rest] = location.images;
 
   return (
-    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+    // Capped width — full-bleed made the mosaic noticeably larger than the
+    // rest of the sucursal detail below it; a smaller block keeps it in
+    // proportion with the map/hours grid that follows.
+    <div className="grid max-w-2xl grid-cols-1 gap-1 sm:grid-cols-2">
       <div className="relative aspect-[4/3] sm:row-span-2 sm:aspect-auto">
         <PlaceholderImage
           alt={main?.alt ?? location.name}
