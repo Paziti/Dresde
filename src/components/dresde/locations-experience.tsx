@@ -28,9 +28,24 @@ export function LocationsExperience() {
 
   // Restore selection from the URL hash on load (#dresde-01, etc.) — this
   // runs once on mount, client-side only, so it never fights hydration.
+  //
+  // The browser's own scroll restoration was fighting this: no element on
+  // the page actually has an id matching the hash (it's bookkeeping, not
+  // a real anchor), so a plain visit landed wherever the browser's
+  // back/forward cache happened to remember from a previous visit to the
+  // same URL — reported as "sometimes at the top, sometimes a bit lower".
+  // Taking manual control and forcing (0, 0) for a plain link makes every
+  // fresh visit start from the same place regardless of that history.
   useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
     const hash = window.location.hash.replace("#dresde-", "");
-    if (isValidId(hash)) setSelectedId(hash);
+    if (isValidId(hash)) {
+      setSelectedId(hash);
+    } else {
+      window.scrollTo(0, 0);
+    }
     // setSelectedId is a useState setter (via context) — stable across
     // renders, so listing it here doesn't cause extra runs; it only
     // satisfies exhaustive-deps.

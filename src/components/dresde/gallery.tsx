@@ -41,8 +41,11 @@ export function Gallery() {
               text-display-l used for "Elegí tu Dresde" made "@dresde.co"
               (with its @ and . pulling extra visual weight) overwhelm the
               section. A smaller, still-fluid scale of its own instead of
-              reusing a named token that doesn't quite fit. */}
-          <h2 className="font-display text-[clamp(1.75rem,1.3rem+3.2vw,3rem)] leading-[0.95] tracking-[-0.01em] font-extrabold uppercase text-dresde-paper">
+              reusing a named token that doesn't quite fit.
+              The grid below is 3 columns on mobile (small square tiles,
+              was 2 larger ones) — the previous floor of this clamp still
+              assumed the bigger tiles and read oversized next to them. */}
+          <h2 className="font-display text-[clamp(1.375rem,1.05rem+2.2vw,2.75rem)] leading-[0.95] tracking-[-0.01em] font-extrabold uppercase text-dresde-paper">
             @dresde.co
           </h2>
         </div>

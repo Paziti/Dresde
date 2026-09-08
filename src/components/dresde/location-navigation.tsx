@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Location } from "@/lib/types";
 import { ease, duration } from "@/lib/motion";
 
@@ -22,8 +23,30 @@ type LocationNavigationProps = {
  * earlier version that hung the indicator outside the button's box.
  */
 export function LocationNavigation({ locations, selectedId, onSelect }: LocationNavigationProps) {
+  const navRef = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+
+  // The active tab's underline is correct the moment `selectedId` changes,
+  // but on a narrow screen the tab itself can be scrolled off to the
+  // right — picking a local straight from the grid above (skipping the
+  // earlier tabs) left the bar sitting at its default scroll position,
+  // still showing Estomba first with nothing marked active in view. This
+  // scrolls whichever tab is actually selected into the visible area,
+  // on every change (including the initial one restored from the URL).
+  useEffect(() => {
+    const active = navRef.current?.querySelector<HTMLElement>(
+      `[data-location-id="${selectedId}"]`
+    );
+    active?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [selectedId, reduce]);
+
   return (
     <nav
+      ref={navRef}
       aria-label="Elegir local"
       className="sticky top-[77px] z-40 -mx-5 flex gap-6 overflow-x-auto border-b border-dresde-line bg-dresde-black/95 px-5 backdrop-blur-sm sm:-mx-8 sm:px-8"
     >
@@ -33,6 +56,7 @@ export function LocationNavigation({ locations, selectedId, onSelect }: Location
           <button
             key={location.id}
             type="button"
+            data-location-id={location.id}
             onClick={() => onSelect(location.id)}
             aria-current={active ? "true" : undefined}
             className="group relative flex shrink-0 flex-col items-center whitespace-nowrap pt-5 font-sans text-label uppercase tracking-[0.14em] text-dresde-mute transition-colors duration-(--duration-fast) ease hover:text-dresde-paper focus-visible:text-dresde-paper"
