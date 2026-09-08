@@ -33,7 +33,11 @@ Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos l
 
 ## Transición hero → contenido
 
-`hero-curtain-transition.tsx` es un panel de video tipo roller blind que se agranda a medida que se scrollea del hero a "Elegí tu Dresde" — scrubbed por scroll (Motion `useScroll`), no por tiempo: scrollear para atrás lo achica de nuevo. El video (no es contenido de Dresde — clip de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels) se reproduce mientras el panel está cerca de la pantalla y se pausa cuando queda lejos. Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
+`hero-scene-transition.tsx` funde el Hero y un video en una sola escena continua controlada por scroll: no hay un bloque de video aparte entre dos secciones, sino un crossfade real. Un contenedor de 180vh fija (`sticky`) el hero y el video superpuestos; a medida que se scrollea (~80vh de recorrido real), el hero se desvanece y sube (`opacity`/`translateY`) mientras el video gana presencia y escala (`opacity`/`scale`) hasta ser el foco, para luego desvanecerse él también y dar paso a "Elegí tu Dresde". Todo es función de `scrollYProgress` (Motion `useScroll` + `useTransform`), nunca de una duración fija, así que scrollear para arriba revierte la escena exactamente frame a frame. Con `prefers-reduced-motion` se muestran hero y video en bloques estáticos, sin sticky ni transform.
+
+El `opacity` del hero y del video se escribe al DOM a mano desde el mismo `MotionValue` (`useMotionValueEvent`) en lugar de vía el `style` prop de Framer Motion: en este componente, mezclado con `scale`/`y` en el mismo objeto de estilo, Framer recalculaba `opacity` bien pero no lo commiteaba al DOM (sí lo hacía con las props de transform). `scale`/`y` siguen yendo por el camino normal de Framer sin problema.
+
+El video (no es contenido de Dresde — clip de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels) se reproduce solo mientras la escena está en viewport (`useInView`). Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
 
 ## Estructura
 
