@@ -15,6 +15,17 @@ import { DresdeHero } from "./dresde-hero";
 // content replaces it. See public/video/ and the README.
 const VIDEO_SRC = "/video/clipper-curtain.mp4";
 
+// On a wide desktop viewport, `object-cover` barely crops this clip
+// horizontally — the whole 16:9 frame is visible, and the actual
+// haircut/clipper action sits noticeably right of center, with mostly
+// empty blurred background on the left third. On a narrow mobile
+// portrait viewport, `object-cover` crops HARD on the horizontal axis
+// (a tall/narrow box against a wide clip), so the default 50% center
+// anchor was landing squarely on that empty left-of-subject area —
+// reported as "seeing the left side" on mobile. Biasing the anchor
+// right shifts the visible slice toward where the subject actually is.
+const VIDEO_OBJECT_POSITION = "70% center";
+
 /**
  * Hero → "Elegí tu Dresde" as one continuous scroll-driven scene, not
  * hero-section, then separate-video-block, then next-section. A single
@@ -172,6 +183,7 @@ export function HeroSceneTransition() {
             loop
             playsInline
             preload="metadata"
+            style={{ objectPosition: VIDEO_OBJECT_POSITION }}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </section>
@@ -215,6 +227,7 @@ export function HeroSceneTransition() {
               width: "130vw",
               height: "130svh",
               maxWidth: "none",
+              objectPosition: VIDEO_OBJECT_POSITION,
             }}
             className="absolute object-cover"
           />
