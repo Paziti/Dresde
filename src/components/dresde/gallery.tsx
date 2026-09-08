@@ -57,11 +57,11 @@ export function Gallery() {
         </a>
       </header>
 
-      {/* Capped width — full-bleed made each of the 6 tiles noticeably
-          larger than the teaser this section is meant to be; a smaller,
-          left-aligned block reads as secondary content next to the real
-          sucursal grid above it. */}
-      <ul className="grid max-w-xl grid-cols-2 gap-1 sm:grid-cols-3">
+      {/* Full width, but more columns than a typical 2/3-col mosaic — six
+          small square tiles read as an Instagram grid teaser, not a
+          second full-size photo section competing with the sucursal
+          grid above it. */}
+      <ul className="grid grid-cols-3 gap-1 sm:grid-cols-6">
         {galleryItems.map((item) => (
           <li key={item.id} className="relative aspect-square">
             <a
