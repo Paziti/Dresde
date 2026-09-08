@@ -75,9 +75,15 @@ export function HeroSceneTransition() {
   // reveal instead of racing ahead of it.
   const videoClipTop = useTransform(scrollYProgress, [0.38, 0.72], [100, 0]);
   const videoScale = useTransform(scrollYProgress, [0.38, 0.66, 1], [0.88, 1, 1.08]);
-  // Short fade right at the very end, so the cut into "Elegí tu Dresde"
-  // isn't an abrupt hard stop once the sticky panel releases.
-  const videoOpacity = useTransform(scrollYProgress, [0.9, 1], [1, 0]);
+  // Fade into "Elegí tu Dresde" at the very end. Widened from an
+  // earlier [0.9, 1] — that 10%-of-progress window was only ~50–70px
+  // of actual scroll (out of the ~80vh runway), short enough that a
+  // single wheel/trackpad gesture crossed it in one or two frames and
+  // read as an abrupt cut rather than a fade. 25% gives it enough
+  // scroll distance to actually feel gradual, while the video is still
+  // fully revealed and covering the viewport (clipTop reveal finishes
+  // at 0.72) for the whole hold before this starts.
+  const videoOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0]);
 
   // `opacity` (and, for the same reason, `clip-path`) are deliberately
   // NOT passed through the motion component's `style` prop here —

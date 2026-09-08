@@ -38,7 +38,7 @@ Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos l
 1. Los primeros 0→0.12 de progreso son una zona muerta: nada se mueve todavía. Sin esto, el hero empezaba a desvanecerse con el primer píxel de scroll (el recorrido real es corto, ~80vh), lo que se sentía prematuro.
 2. El hero se desvanece y sube (`opacity`/`translateY`) — progreso 0.12→0.38.
 3. Recién cuando el hero terminó de retirarse (progreso ≥0.38) el video empieza a revelarse desde el borde inferior hacia arriba vía `clip-path: inset()` (no vía opacity) mientras hace un leve dolly-in (`scale` 0.88→1.08).
-4. Un fade corto al final (0.9→1) evita un corte brusco al pasar a "Elegí tu Dresde".
+4. Un fade al final (0.75→1, el 25% del progreso) evita un corte brusco al pasar a "Elegí tu Dresde" — una ventana más angosta (probado con 0.9→1) equivale a tan pocos píxeles de scroll real que un solo gesto de rueda/trackpad la atraviesa entera en uno o dos frames y se percibe como corte, no como fade.
 
 El hero vive en su propia capa (`z-10`) por encima del video (`z-0`) — no es un cross-dissolve: mientras el hero tiene cualquier opacidad, el video literalmente no tiene área visible (`clip-path` en `inset(100%)`), así que nunca se ve el video "atravesando" o mezclado con el logo. Todo depende de `scrollYProgress` (Motion `useScroll` + `useTransform`), nunca de una duración fija, así que scrollear para arriba revierte la escena exactamente frame a frame. Con `prefers-reduced-motion` se muestran hero y video en bloques estáticos, sin sticky ni transform.
 
