@@ -31,35 +31,31 @@ export function HeroCurtainTransition() {
     offset: ["start start", "end end"],
   });
 
-  // 0 → nothing visible yet (a zero-height sliver at the top edge);
-  // 1 → the panel is fully covered. Driven by `clip-path`, not a
-  // `scaleY` transform on the panel: a transform that scales an
-  // ancestor to zero height also zeroes the *rendered* size of the
-  // `<video>` inside it, and Chrome deprioritizes loading a video at
-  // zero rendered size hard enough that it never recovered even once
-  // the ancestor grew back — found this the hard way. `clip-path` only
-  // ever hides overflow; the video underneath stays at its real, full
-  // size for the whole scroll range, so it loads normally.
-  const bottomInset = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  const clipPath = useTransform(bottomInset, (v) => `inset(0% 0% ${v}% 0%)`);
-  const edgeTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // p: 0 → nothing visible yet (a zero-height sliver at the top edge);
+  // 1 → the panel is fully covered. One combined transform (rather than
+  // chaining two) so there's a single, easy-to-inspect function from
+  // scroll progress straight to the CSS value.
+  //
+  // `clip-path`, not a `scaleY` transform on the panel: a transform that
+  // scales an ancestor to zero height also zeroes the *rendered* size of
+  // the `<video>` inside it, and Chrome deprioritizes loading a video at
+  // zero rendered size hard enough that it never recovered even once the
+  // ancestor grew back — found this the hard way. `clip-path` only ever
+  // hides overflow; the video underneath stays at its real, full size
+  // for the whole scroll range, so it loads normally.
+  const clipPath = useTransform(scrollYProgress, (p) => `inset(0% 0% ${(1 - p) * 100}% 0%)`);
+  const edgeTop = useTransform(scrollYProgress, (p) => `${p * 100}%`);
 
-  // Two separate visibility questions on the same container:
-  // - `everNear` (once: true) gates *mounting* the <video> at all — no
-  //   point fetching a multi-MB file while the visitor is still reading
-  //   the hero, well above this section.
-  // - `currentlyNear` (no once) gates play/pause once mounted, so it
-  //   doesn't keep decoding in the background — and burning battery —
-  //   after the visitor has scrolled well past it into other sections.
-  const everNear = useInView(containerRef, { once: true, margin: "400px 0px 400px 0px" });
-  const currentlyNear = useInView(containerRef, { margin: "200px 0px 200px 0px" });
+  // Lazy-mount the <video> once the section is getting close — no point
+  // fetching a multi-MB file while the visitor is still reading the
+  // hero, well above this section. `once: true`: it should never
+  // unmount again after — scrolling back and forth near the boundary
+  // would otherwise restart playback each time.
+  const mounted = useInView(containerRef, { once: true, margin: "300px 0px 300px 0px" });
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (currentlyNear) video.play().catch(() => {});
-    else video.pause();
-  }, [currentlyNear, everNear]);
+    if (mounted) videoRef.current?.play().catch(() => {});
+  }, [mounted]);
 
   // Reduced motion: skip the scroll-jacked reveal and its extra 200vh of
   // scroll distance entirely — straight from hero to content.
@@ -69,16 +65,16 @@ export function HeroCurtainTransition() {
     <div ref={containerRef} className="relative h-[200vh]">
       <div className="sticky top-0 h-svh w-full overflow-hidden bg-dresde-black">
         <motion.div className="absolute inset-0" style={{ clipPath }} aria-hidden="true">
-          {everNear && (
+          {mounted && (
             <video
               ref={videoRef}
               className="absolute inset-0 h-full w-full object-cover"
               src="/video/clipper-curtain.mp4"
               muted
+              autoPlay
               loop
               playsInline
               preload="auto"
-              disablePictureInPicture
               aria-hidden="true"
             />
           )}
