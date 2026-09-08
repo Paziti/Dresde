@@ -47,6 +47,7 @@ export function HeroSceneTransition() {
   const reduce = useReducedMotion();
   const sceneRef = useRef<HTMLElement>(null);
   const heroLayerRef = useRef<HTMLDivElement>(null);
+  const videoMaskRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -89,20 +90,32 @@ export function HeroSceneTransition() {
   // frame. Framer still owns scale/y normally (that path is
   // unaffected); opacity and clip-path are written directly off their
   // MotionValues instead, so nothing fights the manual write.
+  //
+  // clip-path and scale are also deliberately on TWO DIFFERENT elements
+  // (mask wrapper vs. video), not the same one. `scale` shrinks the
+  // whole element toward its center — combined on the same element as
+  // a clip-path reveal, the video's own box was smaller than the
+  // viewport for most of the range (0.88 at the start), leaving black
+  // margins on every edge instead of true edge-to-edge coverage, which
+  // is what actually read as "cut off, using only half the screen".
+  // The mask (always exactly viewport-sized) owns the clip-path reveal;
+  // the video inside it is oversized (130%) and owns the scale dolly,
+  // so it always more than covers the mask's window regardless of
+  // scale.
   useMotionValueEvent(heroOpacity, "change", (latest) => {
     if (heroLayerRef.current) heroLayerRef.current.style.opacity = String(latest);
   });
   useMotionValueEvent(videoClipTop, "change", (latest) => {
-    if (videoRef.current) videoRef.current.style.clipPath = `inset(${latest}% 0% 0% 0%)`;
+    if (videoMaskRef.current) videoMaskRef.current.style.clipPath = `inset(${latest}% 0% 0% 0%)`;
   });
   useMotionValueEvent(videoOpacity, "change", (latest) => {
-    if (videoRef.current) videoRef.current.style.opacity = String(latest);
+    if (videoMaskRef.current) videoMaskRef.current.style.opacity = String(latest);
   });
-  // Same reasoning as above: set the video's starting mask imperatively
+  // Same reasoning as above: set the mask's starting clip imperatively
   // once, rather than via the style prop, so nothing ever resets it to
   // "fully visible" before the first scroll-driven update arrives.
   useEffect(() => {
-    if (videoRef.current) videoRef.current.style.clipPath = "inset(100% 0% 0% 0%)";
+    if (videoMaskRef.current) videoMaskRef.current.style.clipPath = "inset(100% 0% 0% 0%)";
   }, []);
 
   // Play only while the scene is actually part of the transition, not
@@ -156,17 +169,32 @@ export function HeroSceneTransition() {
           <DresdeHero />
         </motion.div>
 
-        <motion.video
-          ref={videoRef}
-          src={VIDEO_SRC}
-          muted
-          autoPlay
-          loop
-          playsInline
-          preload="auto"
-          style={{ scale: videoScale }}
-          className="absolute inset-0 z-0 h-full w-full object-cover"
-        />
+        {/* Always exactly viewport-sized — owns the clip-path reveal
+            only. Never scaled itself, so the reveal window is always
+            the true full screen, edge to edge. */}
+        <div ref={videoMaskRef} className="absolute inset-0 z-0 overflow-hidden">
+          {/* Oversized (130%) so that even at the smallest scale in
+              videoScale's range (0.88), it still more than covers the
+              mask above — no black margins at any point in the dolly. */}
+          <motion.video
+            ref={videoRef}
+            src={VIDEO_SRC}
+            muted
+            autoPlay
+            loop
+            playsInline
+            preload="auto"
+            style={{
+              scale: videoScale,
+              top: "-15%",
+              left: "-15%",
+              width: "130vw",
+              height: "130svh",
+              maxWidth: "none",
+            }}
+            className="absolute object-cover"
+          />
+        </div>
       </div>
     </section>
   );
