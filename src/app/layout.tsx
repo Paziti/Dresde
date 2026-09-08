@@ -62,9 +62,9 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${syne.variable} ${manrope.variable} overflow-x-hidden`}
+      className={`${syne.variable} ${manrope.variable} overflow-x-clip overflow-y-visible`}
     >
-      <body className="bg-dresde-black text-dresde-paper antialiased overflow-x-hidden">
+      <body className="bg-dresde-black text-dresde-paper antialiased overflow-x-clip overflow-y-visible">
         <a href="#contenido" className="skip-link">
           Saltar al contenido
         </a>
