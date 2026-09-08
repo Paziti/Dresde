@@ -33,7 +33,7 @@ Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos l
 
 ## Transición hero → contenido
 
-`hero-curtain-transition.tsx` es una cortina tipo roller blind que se dispara una sola vez al scrollear del hero a "Elegí tu Dresde" (no es contenido de Dresde — es un video de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels). Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
+`hero-curtain-transition.tsx` es un panel de video tipo roller blind que se agranda a medida que se scrollea del hero a "Elegí tu Dresde" — scrubbed por scroll (Motion `useScroll`), no por tiempo: scrollear para atrás lo achica de nuevo. El video (no es contenido de Dresde — clip de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels) se reproduce mientras el panel está cerca de la pantalla y se pausa cuando queda lejos. Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
 
 ## Estructura
 
