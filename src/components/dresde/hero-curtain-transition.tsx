@@ -72,15 +72,22 @@ export function HeroCurtainTransition() {
     if (played) videoRef.current?.play().catch(() => {});
   }, [played]);
 
-  // The sentinel: a 200px band straddling the hero/next-section boundary,
-  // positioned absolutely inside a zero-height wrapper so it never adds a
-  // visible gap to the page. A 1px line trigger turned out too thin for a
-  // real scroll gesture — a fast flick can render a frame just above it
-  // and the next frame already past it, with no frame in between where
-  // IntersectionObserver ever saw it overlap the viewport at all.
+  // The sentinel: a band starting right at the hero/next-section boundary
+  // and extending *down* into the next section, positioned absolutely
+  // inside a zero-height wrapper so it never adds a visible gap to the
+  // page. It has to sit entirely below the boundary, not straddle it —
+  // the hero is `h-svh` (exactly one viewport tall), so on load the
+  // boundary itself sits right at the bottom edge of the screen; a band
+  // centered on it (half above, half below) put its top half inside the
+  // viewport before any scrolling at all, firing the whole sequence
+  // immediately on page load instead of waiting for a real scroll past
+  // the hero. A 1px line trigger was tried first and is too thin for a
+  // real scroll gesture on top of that — a fast flick can render a frame
+  // just above it and the next frame already past it, with no frame in
+  // between where IntersectionObserver ever saw it overlap the viewport.
   const sentinel = (
     <div className="relative h-0" aria-hidden="true">
-      <div ref={sentinelRef} className="absolute inset-x-0 -top-24 h-48" />
+      <div ref={sentinelRef} className="absolute inset-x-0 top-8 h-48" />
     </div>
   );
 
