@@ -23,6 +23,12 @@ type LocationsGridProps = {
  *
  * Mobile: a plain vertical scroll — oversized photography, no hover
  * mechanic a touch screen can't express (brief §11/§20).
+ *
+ * Both variants also carry upstream's other transition effect: the whole
+ * row fades and settles up (opacity + translateY) the first time it
+ * scrolls into view — `whileInView`, not `animate`, since this section
+ * sits well below the fold and would otherwise finish before anyone
+ * scrolls to see it.
  */
 export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGridProps) {
   // Only the ephemeral hover/focus preview lives in state. The tile that
@@ -42,7 +48,11 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
           full-height slot on screen. A one-time state change (not a
           frequent hover interaction), so animating height directly here
           is the same tolerated exception as an accordion. */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, transform: "translateY(20px)" }}
+        whileInView={{ opacity: 1, transform: "translateY(0px)" }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: duration.slow, ease: ease.out }}
         className={cn(
           "hidden gap-1 transition-[height] duration-(--duration-medium) ease-out-strong md:flex md:w-full",
           hasSelection ? "md:h-[42vh] md:min-h-[300px]" : "md:h-[62vh] md:min-h-[420px]"
@@ -115,10 +125,16 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
             </motion.button>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Mobile: natural vertical scroll */}
-      <div className="flex flex-col gap-3 md:hidden">
+      <motion.div
+        initial={{ opacity: 0, transform: "translateY(20px)" }}
+        whileInView={{ opacity: 1, transform: "translateY(0px)" }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: duration.slow, ease: ease.out }}
+        className="flex flex-col gap-3 md:hidden"
+      >
         {locations.map((location) => (
           <button
             key={location.id}
@@ -152,7 +168,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
             </span>
           </button>
         ))}
-      </div>
+      </motion.div>
     </>
   );
 }
