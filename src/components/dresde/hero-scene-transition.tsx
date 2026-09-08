@@ -54,21 +54,26 @@ export function HeroSceneTransition() {
     offset: ["start start", "end end"],
   });
 
-  // Hero fades out and drifts up over the first 30% of the scene —
-  // unchanged from before.
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.3], [0, -48]);
+  // A short dead zone (0→0.12) where scrolling does nothing visible yet:
+  // with only ~80vh of real scroll distance driving the whole scene, the
+  // hero used to start fading on the very first pixel scrolled, which
+  // read as premature — the transformation kicking in before the user
+  // had really committed to scrolling. This buffer gives it a beat to
+  // breathe before anything starts moving. After that, hero fades out
+  // and drifts up — same shape as before, just shifted later.
+  const heroOpacity = useTransform(scrollYProgress, [0.12, 0.38], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0.12, 0.38], [0, -48]);
 
-  // Video reveal starts only once the hero has fully retired (0.3), so
+  // Video reveal starts only once the hero has fully retired (0.38), so
   // there's no window where both are simultaneously visible over the
   // same area. `clipTop` is the percentage still masked off the TOP of
   // the frame: 100 (nothing showing) → 0 (fully revealed) — visually
   // that reads as the video rising up from the bottom edge. The scale
   // dolly-in keeps the same 0.88→1→1.08 sweep as before, just
-  // reanchored to the same 0.3 start so it stays in sync with the
+  // reanchored to the same 0.38 start so it stays in sync with the
   // reveal instead of racing ahead of it.
-  const videoClipTop = useTransform(scrollYProgress, [0.3, 0.7], [100, 0]);
-  const videoScale = useTransform(scrollYProgress, [0.3, 0.65, 1], [0.88, 1, 1.08]);
+  const videoClipTop = useTransform(scrollYProgress, [0.38, 0.72], [100, 0]);
+  const videoScale = useTransform(scrollYProgress, [0.38, 0.66, 1], [0.88, 1, 1.08]);
   // Short fade right at the very end, so the cut into "Elegí tu Dresde"
   // isn't an abrupt hard stop once the sticky panel releases.
   const videoOpacity = useTransform(scrollYProgress, [0.9, 1], [1, 0]);
