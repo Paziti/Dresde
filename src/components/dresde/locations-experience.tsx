@@ -131,6 +131,17 @@ export function LocationsExperience() {
        * own initial→animate reveal on every mount.
        */}
       <div ref={detailRef}>
+        {/* Not inside the keyed motion.div below on purpose: this is
+            persistent navigation chrome, not content being revealed —
+            it should just update which tab is active, not fade/clip in
+            again on every switch the way the actual detail content does. */}
+        {selected && (
+          <LocationNavigation
+            locations={locations}
+            selectedId={selected.id}
+            onSelect={handleSelect}
+          />
+        )}
         {selected ? (
           <motion.div
             key={selected.id}
@@ -146,11 +157,6 @@ export function LocationsExperience() {
             }
             transition={{ duration: reduce ? duration.fast : duration.slow, ease: ease.out }}
           >
-            <LocationNavigation
-              locations={locations}
-              selectedId={selected.id}
-              onSelect={handleSelect}
-            />
             <LocationDetail location={selected} />
           </motion.div>
         ) : (
