@@ -33,9 +33,15 @@ Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos l
 
 ## Transición hero → contenido
 
-`hero-scene-transition.tsx` funde el Hero y un video en una sola escena continua controlada por scroll: no hay un bloque de video aparte entre dos secciones, sino un crossfade real. Un contenedor de 180vh fija (`sticky`) el hero y el video superpuestos; a medida que se scrollea (~80vh de recorrido real), el hero se desvanece y sube (`opacity`/`translateY`) mientras el video gana presencia y escala (`opacity`/`scale`) hasta ser el foco, para luego desvanecerse él también y dar paso a "Elegí tu Dresde". Todo es función de `scrollYProgress` (Motion `useScroll` + `useTransform`), nunca de una duración fija, así que scrollear para arriba revierte la escena exactamente frame a frame. Con `prefers-reduced-motion` se muestran hero y video en bloques estáticos, sin sticky ni transform.
+`hero-scene-transition.tsx` funde el Hero y un video en una sola escena continua controlada por scroll: no hay un bloque de video aparte entre dos secciones. Un contenedor de 180vh fija (`sticky`) el hero y el video superpuestos; a medida que se scrollea (~80vh de recorrido real):
 
-El `opacity` del hero y del video se escribe al DOM a mano desde el mismo `MotionValue` (`useMotionValueEvent`) en lugar de vía el `style` prop de Framer Motion: en este componente, mezclado con `scale`/`y` en el mismo objeto de estilo, Framer recalculaba `opacity` bien pero no lo commiteaba al DOM (sí lo hacía con las props de transform). `scale`/`y` siguen yendo por el camino normal de Framer sin problema.
+1. El hero se desvanece y sube (`opacity`/`translateY`) — progreso 0→0.3.
+2. Recién cuando el hero terminó de retirarse (progreso ≥0.3) el video empieza a revelarse desde el borde inferior hacia arriba vía `clip-path: inset()` (no vía opacity) mientras hace un leve dolly-in (`scale` 0.88→1.08).
+3. Un fade corto al final (0.9→1) evita un corte brusco al pasar a "Elegí tu Dresde".
+
+El hero vive en su propia capa (`z-10`) por encima del video (`z-0`) — no es un cross-dissolve: mientras el hero tiene cualquier opacidad, el video literalmente no tiene área visible (`clip-path` en `inset(100%)`), así que nunca se ve el video "atravesando" o mezclado con el logo. Todo depende de `scrollYProgress` (Motion `useScroll` + `useTransform`), nunca de una duración fija, así que scrollear para arriba revierte la escena exactamente frame a frame. Con `prefers-reduced-motion` se muestran hero y video en bloques estáticos, sin sticky ni transform.
+
+El `opacity` del hero y el `clip-path`/`opacity` del video se escriben al DOM a mano desde sus `MotionValue` (`useMotionValueEvent`) en lugar de vía el `style` prop de Framer Motion: en este componente, cualquier propiedad no-transform mezclada con `scale`/`y` en el mismo objeto de estilo, Framer la recalculaba bien pero no la commiteaba al DOM (sí lo hacía con las props de transform). `scale`/`y` siguen yendo por el camino normal de Framer sin problema.
 
 El video (no es contenido de Dresde — clip de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels) se reproduce solo mientras la escena está en viewport (`useInView`). Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
 
