@@ -29,6 +29,12 @@ type LocationsGridProps = {
  * scrolls into view — `whileInView`, not `animate`, since this section
  * sits well below the fold and would otherwise finish before anyone
  * scrolls to see it.
+ *
+ * `viewport.amount` is 0.1, not the more typical 0.3 — on mobile the
+ * five stacked buttons make this one very tall element (5 × ~58vh), so
+ * 30% of it meant scrolling nearly a full screen past the section title
+ * before anything appeared. 10% fires as soon as a sensible slice of the
+ * first tile is on screen, on both layouts.
  */
 export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGridProps) {
   // Only the ephemeral hover/focus preview lives in state. The tile that
@@ -51,7 +57,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
       <motion.div
         initial={{ opacity: 0, transform: "translateY(20px)" }}
         whileInView={{ opacity: 1, transform: "translateY(0px)" }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: duration.slow, ease: ease.out }}
         className={cn(
           "hidden gap-1 transition-[height] duration-(--duration-medium) ease-out-strong md:flex md:w-full",
@@ -131,7 +137,7 @@ export function LocationsGrid({ locations, selectedId, onSelect }: LocationsGrid
       <motion.div
         initial={{ opacity: 0, transform: "translateY(20px)" }}
         whileInView={{ opacity: 1, transform: "translateY(0px)" }}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: duration.slow, ease: ease.out }}
         className="flex flex-col gap-3 md:hidden"
       >
