@@ -31,6 +31,10 @@ Son 5 sucursales en total — confirmado por el caption de un post de aniversari
 
 Para agregar o editar un local, solo hace falta tocar `locations.ts` — todos los componentes leen de esa estructura, no hay nada hardcodeado en el JSX.
 
+## Transición hero → contenido
+
+`hero-curtain-transition.tsx` es una cortina tipo roller blind que se dispara una sola vez al scrollear del hero a "Elegí tu Dresde" (no es contenido de Dresde — es un video de stock genérico, `public/video/clipper-curtain.mp4`, licencia libre de Pexels). Reemplazable por cualquier otro clip corto (sin gente hablando, sin texto en pantalla) cambiando el `src` del `<video>`.
+
 ## Estructura
 
 ```
@@ -43,4 +47,5 @@ public/
   brand/                  # logo
   locations/              # fotos de fachada
   team/                   # fotos de barberos
+  video/                  # clip de la transición hero → contenido
 ```
